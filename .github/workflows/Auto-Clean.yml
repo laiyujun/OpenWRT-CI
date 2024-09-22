@@ -1,15 +1,16 @@
 name: Auto-Clean
 
 on:
-  #自动清理：每天早上3点
-  #schedule:
-  #  - cron: 0 19 * * *
+  #自动清理：每天早上4点
+  schedule:
+    - cron: 0 20 * * *
   #手动清理
   workflow_dispatch:
     inputs:
       NUMBER:
         default: '2'
         required: false
+        description: '默认保留数量'
         type: string
 
 env:
@@ -24,7 +25,7 @@ jobs:
       - name: Delete Old Releases
         uses: dev-drprasad/delete-older-releases@master
         with:
-          keep_latest: ${{inputs.NUMBER || '2'}}
+          keep_latest: ${{inputs.NUMBER || '0'}}
           delete_tags: true
 
       - name: Delete Old Workflows
