@@ -13,22 +13,26 @@ on:
         default: 'IPQ60xx-6.6-WIFI-YES'
         required: true
         type: choice
-        options: [IPQ60xx-6.6-WIFI-YES]
+        description: '配置文件名'
+        options: [ IPQ60xx-6.6-WIFI-YES]
       SOURCE:
         default: 'LiBwrt-op/openwrt-6.x'
         required: true
         type: choice
-        options: [VIKINGYFY/immortalwrt, immortalwrt/immortalwrt, King-Of-Knights/openwrt-6.x, LiBwrt-op/openwrt-6.x]
+        description: '源码仓库名'
+        options: [ VIKINGYFY/immortalwrt, immortalwrt/immortalwrt, King-Of-Knights/openwrt-6.x, LiBwrt-op/openwrt-6.x]
       BRANCH:
         default: 'main'
         required: true
+        description: '源码分支名'
         type: string
       PACKAGE:
         required: false
+        description: 'luci-app-xxx软件包名'
         type: string
       TEST:
         description: '仅输出配置文件，不编译固件。'
-        default: 'false'
+        default: false
         required: true
         type: boolean
 
@@ -38,7 +42,7 @@ permissions: write-all
 #CI任务
 jobs:
   config:
-    name: ${{matrix.TARGET}}
+    name: ${{matrix.TARGET || inputs.TARGET}}
     strategy:
       fail-fast: false
       #max-parallel: 3
@@ -49,7 +53,7 @@ jobs:
     uses: ./.github/workflows/IPQ60XX-6.6-CORE.yml
     with:
       #编译平台
-      WRT_TARGET: ${{matrix.TARGET}}
+      WRT_TARGET: ${{matrix.TARGET || inputs.TARGET}}
       #默认主题
       WRT_THEME: argon
       #默认主机名
@@ -61,11 +65,11 @@ jobs:
       #默认密码，仅作提示，修改无用
       WRT_PW: 无
       #源码链接
-      WRT_REPO: https://github.com/${{matrix.SOURCE}}.git
+      WRT_REPO: https://github.com/${{matrix.SOURCE || inputs.SOURCE}}.git
       #源码分支
       WRT_BRANCH: ${{inputs.BRANCH || 'main'}}
       #源码名称
-      WRT_SOURCE: ${{matrix.SOURCE}}
+      WRT_SOURCE: ${{matrix.SOURCE || inputs.SOURCE}}
       #插件调整
       WRT_PACKAGE: ${{inputs.PACKAGE}}
       #仅输出配置文件
